@@ -27,10 +27,14 @@ export default {
       return new Promise((resolve, reject) => {
         Jiro.addJiroInfo(payload)
           .then((response) => {
-            console.log("Response from Jiro.addJiroInfo:", response);
-            if (response.status == 200 || response.status === 201) {
+            console.log(response);
+            if (response.status === 200 || response.status === 201) {
               commit("SET_NEW_JIRO_INFO", response.data);
               resolve(response);
+            } else if (response.status == "") {
+              debugger;
+            } else {
+              console.log("Walang nagtrue");
             }
           })
           .catch((error) => {

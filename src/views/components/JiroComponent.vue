@@ -20,7 +20,7 @@
                     <v-divider></v-divider>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" @click="btnSubmitFields" small>Submit</v-btn>
+                        <v-btn color="primary" @click="btnSubmitFields" small :disabled="isFormEmpty">Submit</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-col>
@@ -61,7 +61,8 @@ export default {
                 name: null,
                 contact: null,
                 address: null
-            }
+            },
+            isFormEmpty: true,
         }
     },
 
@@ -81,14 +82,14 @@ export default {
             // itong "submitFields" ayan yung function na nasa actions niyo
             this.$store.dispatch("addJiroInfo", payload)
                 .then((response) => {
-                    debugger
-                    if (response.data == "404") {
-                        swal.fire({
-                            text: "Something Went Wrong",
-                            icon: "error",
-                        });
-                        return;
-                    }
+                    // debugger
+                    // if (response.data == "404" || response.data == "500") {
+                    //     swal.fire({
+                    //         text: "Something Went Wrong",
+                    //         icon: "error",
+                    //     });
+                    //     return;
+                    // }
                     swal.fire({
                         text: "Added Successfully!",
                         icon: "success",
@@ -117,7 +118,18 @@ export default {
     computed: {
         ...mapGetters([
             "GET_NEW_JIRO_INFO"
-        ])
+        ]),
+    },
+
+    watch: {
+        form: {
+            deep: true,
+            handler(newFormValue) {
+                // Check if any property in the form is null
+                // this.isFormEmpty = Object.values(newFormValue).some(value => value === null);
+                this.isFormEmpty = Object.values(newFormValue).some(value => value === null || value === '');
+            }
+        }
     }
 }
 </script>
