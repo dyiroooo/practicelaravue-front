@@ -50,8 +50,11 @@
 </template>
 
 <script>
+import swal from 'sweetalert2';
 
+import { mapGetters } from 'vuex';
 export default {
+    // Dito sa data() diyan ka maglalagay ng mga variable
     data() {
         return {
             form: {
@@ -61,14 +64,60 @@ export default {
             }
         }
     },
+
+    // dito sa method, dito ka maglalagay ng mga functions
     methods: {
         btnSubmitFields() {
-            alert("Dapat Mag Submit To");
+            /** 
+             itong payload, gagamitin niyo sa vuex (this.$store.dispatch)
+             tapos yung .dispatch ayan yung ginagamit sa 'actions' sa vuex niyo
+             sa may (store na folder)
+             * */
+            let payload = {
+                name: this.form.name,
+                contact: this.form.contact,
+                address: this.form.address
+            };
+            // itong "submitFields" ayan yung function na nasa actions niyo
+            this.$store.dispatch("addJiroInfo", payload)
+                .then((response) => {
+                    debugger
+                    if (response.data == "404") {
+                        swal.fire({
+                            text: "Something Went Wrong",
+                            icon: "error",
+                        });
+                        return;
+                    }
+                    swal.fire({
+                        text: "Added Successfully!",
+                        icon: "success",
+                    })
+                    this.clearFields();
+                }).catch((error) => {
+                    console.error(error);
+                })
         },
 
         alertSomething() {
-            alert("Component ni Jiro To");
+            swal.fire({
+                text: "Added Successfully!",
+                icon: "success",
+            })
+        },
+
+        clearFields() {
+            this.form.name = null,
+                this.form.address = null,
+                this.form.contact = null
         }
+    },
+
+    // itong computed dito tatawagin yung mga getters mo 
+    computed: {
+        ...mapGetters([
+            "GET_NEW_JIRO_INFO"
+        ])
     }
 }
 </script>
